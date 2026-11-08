@@ -1,0 +1,26 @@
+name: Build Raider
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Pick newest Spigot API version
+        run: |
+          curl -fsSL https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/spigotmc/spigot-api/maven-metadata.xml -o m.xml
+          V=$(grep -o '<version>[^<]*</version>' m.xml | sed 's/<[^>]*>//g' | grep '^26\.3' | tail -1 || true)
+          if [ -z "$V" ]; then V=$(grep -o '<latest>[^<]*</latest>' m.xml | sed 's/<[^>]*>//g'); fi
+          echo "Using Spigot API $V"
+          echo "V=$V" >> $GITHUB_ENV
+      - name: Build
+        run: mvn -B package -Dspigot.version=$V
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Raider
+          path: target/Raider.jar

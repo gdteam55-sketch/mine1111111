@@ -1,0 +1,14 @@
+name: Raider
+version: 1.0.0
+main: raider.Raider
+api-version: '26.1'
+description: Ядро Рейдера - переговоры, волны мобов, пчелы-смертники и техника
+commands:
+  raider:
+    description: Управление плагином Raider
+    usage: /raider <give|start|stop|wave|status|clear>
+    permission: raider.admin
+permissions:
+  raider.admin:
+    description: Админ-команды Raider
+    default: op
